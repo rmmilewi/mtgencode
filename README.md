@@ -8,7 +8,7 @@ The purpose of this code is mostly to wrangle text between various human and mac
 
 ## Requirements
 
-I'm running this code on Ubuntu 14.04 with Python 2.7. Unfortunately it does not work with Python 3, though apparently it isn't too hard to use 2to3 to automatically convert it.
+This fork of the code has been modified to use Python3 rather than Python2.
 
 For the most part it should work out of the box, though there are a few optional bonus features that will make it much better. See [DEPENDENCIES.md](https://github.com/billzorn/mtgencode/blob/master/DEPENDENCIES.md#dependencies).
 
