@@ -672,3 +672,26 @@ def text_unpass_8_unicode(s):
     s = s.replace(dash_marker, '\u2014')
     s = s.replace(bullet_marker, '\u2022')
     return s
+    
+def text_pass_12_addspaces(s):
+        s = s.replace(utils.newline, ' ' + utils.newline + ' ')
+        s = s.replace(utils.mana_open_delimiter, ' ' + utils.mana_open_delimiter + ' ')
+        s = s.replace(utils.mana_close_delimiter, ' ' + utils.mana_close_delimiter + ' ')
+        s = s.replace(utils.dash_marker, ' ' + utils.dash_marker + ' ')
+        s = s.replace(utils.bullet_marker, ' ' + utils.bullet_marker + ' ')
+        s = s.replace(utils.this_marker, ' ' + utils.this_marker + ' ')
+        s = s.replace(utils.counter_marker, ' ' + utils.counter_marker + ' ')
+        s = s.replace(utils.reserved_marker, ' ' + utils.reserved_marker + ' ')
+        s = s.replace(utils.reserved_mana_marker, ' ' + utils.reserved_mana_marker + ' ')
+        s = s.replace(utils.choice_open_delimiter, ' ' + utils.choice_open_delimiter + ' ')
+        s = s.replace(utils.choice_close_delimiter, ' ' + utils.choice_close_delimiter + ' ')
+        s = s.replace(utils.x_marker, ' ' + utils.x_marker + ' ')
+        s = s.replace(utils.tap_marker, ' ' + utils.tap_marker + ' ')
+        s = s.replace(utils.untap_marker, ' ' + utils.untap_marker + ' ')
+        s = s.replace('/', ' ' + '/' + ' ')
+        s = s.replace(',', ' ' + ',' + ' ')
+        s = s.replace('.', ' ' + '.' + ' ')
+        s = s.replace('"', ' ' + '"' + ' ')
+        s = s.replace('\\', ' ' + '\\' + ' ')
+        
+        return s

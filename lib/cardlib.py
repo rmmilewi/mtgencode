@@ -227,7 +227,7 @@ def fields_check_valid(fields):
 # releaseDate - string
 # starter - boolean
 
-def fields_from_json(src_json, linetrans = True):
+def fields_from_json(src_json, linetrans = True, addspaces = False):
     parsed = True
     valid = True
     fields = {}
@@ -279,13 +279,13 @@ def fields_from_json(src_json, linetrans = True):
     p_t = ''
     parsed_pt = True
     if 'power' in src_json:
-        p_t = utils.to_ascii(utils.to_unary(src_json['power'])) + '/' # hardcoded
+        p_t = utils.to_ascii(utils.to_unary(src_json['power'])) + ' / ' # hardcoded
         parsed_pt = False
         if 'toughness' in src_json:
             p_t = p_t + utils.to_ascii(utils.to_unary(src_json['toughness']))
             parsed_pt = True
     elif 'toughness' in src_json:
-        p_t = '/' + utils.to_ascii(utils.to_unary(src_json['toughness'])) # hardcoded
+        p_t = ' / ' + utils.to_ascii(utils.to_unary(src_json['toughness'])) # hardcoded
         parsed_pt = False
     if p_t:
         fields[field_pt] = [(-1, p_t)]
@@ -307,8 +307,11 @@ def fields_from_json(src_json, linetrans = True):
         text_val = transforms.text_pass_10_symbols(text_val)
         if linetrans:
             text_val = transforms.text_pass_11_linetrans(text_val)
+        if addspaces:
+            text_val = transforms.text_pass_12_addspaces(text_val)
         text_val = utils.to_ascii(text_val)
         text_val = text_val.strip()
+        
         mtext = Manatext(text_val, fmt = 'json')
         valid = valid and mtext.valid
         fields[field_text] = [(-1, mtext)]
@@ -395,7 +398,7 @@ class Card:
 
     def __init__(self, src, fmt_ordered = fmt_ordered_default, 
                             fmt_labeled = fmt_labeled_default, 
-                            fieldsep = utils.fieldsep, linetrans = True):
+                            fieldsep = utils.fieldsep, linetrans = True, addspaces = False):
 
         # source fields, exactly one will be set
         self.json = None
@@ -438,7 +441,7 @@ class Card:
                                   fmt_labeled = fmt_labeled,
                                   fieldsep = fieldsep,
                                   linetrans = linetrans)
-            p_success, v_success, parsed_fields = fields_from_json(src, linetrans = linetrans)
+            p_success, v_success, parsed_fields = fields_from_json(src, linetrans = linetrans, addspaces = addspaces)
             self.parsed = p_success
             self.valid = v_success
             self.fields = parsed_fields
@@ -566,7 +569,7 @@ class Card:
 
     def encode(self, fmt_ordered = fmt_ordered_default, fmt_labeled = fmt_labeled_default, 
                fieldsep = utils.fieldsep, initial_sep = True, final_sep = True,
-               randomize_fields = False, randomize_mana = False, randomize_lines = False):
+               randomize_fields = False, randomize_mana = False, randomize_lines = False,addspaces = False):
         outfields = []
 
         for field in fmt_ordered:
@@ -577,9 +580,9 @@ class Card:
                     if isinstance(outfield, list):
                         outfield_str = ' '.join(outfield)
                     elif isinstance(outfield, Manacost):
-                        outfield_str = outfield.encode(randomize = randomize_mana)
+                        outfield_str = outfield.encode(randomize = randomize_mana, addspaces = addspaces)
                     elif isinstance(outfield, Manatext):
-                        outfield_str = outfield.encode(randomize = randomize_mana)
+                        outfield_str = outfield.encode(randomize = randomize_mana, addspaces = addspaces)
                         if randomize_lines:
                             outfield_str = transforms.randomize_lines(outfield_str)
                     else:
@@ -588,8 +591,8 @@ class Card:
                     outfield_str = ''
 
                 if fmt_labeled and field in fmt_labeled:
-                        outfield_str = fmt_labeled[field] + outfield_str
-
+                    outfield_str = fmt_labeled[field] + outfield_str
+                    
                 outfields += [outfield_str]
 
             else:
@@ -602,6 +605,13 @@ class Card:
         if final_sep:
             outfields = outfields + ['']
 
+        #if add_spaces:
+        #    def intersperse(lst, item):
+        #        result = [item] * (len(lst) * 2 - 1)
+        #        result[0::2] = lst
+        #        return result
+        #    outfields = intersperse(outfields, ' XXX ')
+            
         outstr = fieldsep.join(outfields)
 
         if self.bside:

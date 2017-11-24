@@ -78,7 +78,7 @@ def default_exclude_layouts(layout):
 
 # centralized logic for opening files of cards, either encoded or json
 def mtg_open_file(fname, verbose = False,
-                  linetrans = True, fmt_ordered = cardlib.fmt_ordered_default,
+                  linetrans = True, addspaces = False, fmt_ordered = cardlib.fmt_ordered_default,
                   exclude_sets = default_exclude_sets,
                   exclude_types = default_exclude_types,
                   exclude_layouts = default_exclude_layouts):
@@ -100,7 +100,7 @@ def mtg_open_file(fname, verbose = False,
 
                 # look for a normal rarity version, in a set we can use
                 idx = 0
-                card = cardlib.Card(jcards[idx], linetrans=linetrans)
+                card = cardlib.Card(jcards[idx], linetrans=linetrans,addspaces=addspaces)
                 while (idx < len(jcards)
                        and (card.rarity == utils.rarity_special_marker
                             or exclude_sets(jcards[idx][utils.json_field_set_name]))):

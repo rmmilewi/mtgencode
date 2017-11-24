@@ -116,16 +116,20 @@ class Manacost:
             return utils.mana_untranslate(utils.mana_open_delimiter + ''.join(self.sequence)
                                           + utils.mana_close_delimiter, for_forum, for_html)
 
-    def encode(self, randomize = False):
+    def encode(self, randomize = False,addspaces = False):
+        if addspaces:
+            joinspace = ' '
+        else:
+            joinspace = ''
         if self.none:
             return ''
         elif randomize:
             # so this won't work very well if mana_unary_marker isn't empty
-            return (utils.mana_open_delimiter 
-                    + ''.join(random.sample(self.sequence, len(self.sequence)))
-                    + utils.mana_close_delimiter)
+            return (utils.mana_open_delimiter + ' ' 
+                    + joinspace.join(random.sample(self.sequence, len(self.sequence)))
+                    + ' ' + utils.mana_close_delimiter)
         else:
-            return utils.mana_open_delimiter + ''.join(self.sequence) + utils.mana_close_delimiter
+            return utils.mana_open_delimiter + ' ' + joinspace.join(self.sequence) + ' ' + utils.mana_close_delimiter
 
     def vectorize(self, delimit = False):
         if self.none:
@@ -186,10 +190,10 @@ class Manatext:
             text = text.replace('\n', '<br>\n')
         return text
 
-    def encode(self, randomize = False):
+    def encode(self, randomize = False,addspaces = False):
         text = self.text
         for cost in self.costs:
-            text = text.replace(utils.reserved_mana_marker, cost.encode(randomize = randomize), 1)
+            text = text.replace(utils.reserved_mana_marker, cost.encode(randomize = randomize, addspaces = addspaces), 1)
         return text
 
     def vectorize(self):

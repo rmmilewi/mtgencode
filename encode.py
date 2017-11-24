@@ -11,10 +11,19 @@ import jdecode
 import cardlib
 
 def main(fname, oname = None, verbose = True, encoding = 'std', 
-         nolinetrans = False, randomize = False, nolabel = False, stable = False):
+         nolinetrans = False, randomize = False, nolabel = False, stable = False, addspaces = False):
     fmt_ordered = cardlib.fmt_ordered_default
     fmt_labeled = None if nolabel else cardlib.fmt_labeled_default
+    
+    if fmt_labeled is not None and addspaces:
+        for label in fmt_labeled:
+            fmt_labeled[label] = ' ' + fmt_labeled[label] + ' '
+    
     fieldsep = utils.fieldsep
+    
+    if addspaces:
+        fieldsep = ' ' + fieldsep + ' '
+    
     line_transformations = not nolinetrans
     randomize_fields = False
     randomize_mana = randomize
@@ -58,7 +67,7 @@ def main(fname, oname = None, verbose = True, encoding = 'std',
         if not line_transformations:
             print('  NOT using line reordering transformations')
 
-    cards = jdecode.mtg_open_file(fname, verbose=verbose, linetrans=line_transformations)
+    cards = jdecode.mtg_open_file(fname, verbose=verbose, linetrans=line_transformations, addspaces = addspaces)
 
     # This should give a random but consistent ordering, to make comparing changes
     # between the output of different versions easier.
@@ -77,7 +86,7 @@ def main(fname, oname = None, verbose = True, encoding = 'std',
                                          randomize_fields = randomize_fields,
                                          randomize_mana = randomize_mana,
                                          initial_sep = initial_sep,
-                                         final_sep = final_sep) 
+                                         final_sep = final_sep,addspaces = addspaces) 
                              + utils.cardsep)
 
     if oname:
@@ -110,11 +119,13 @@ if __name__ == '__main__':
                         help="don't label fields")
     parser.add_argument('-s', '--stable', action='store_true',
                         help="don't randomize the order of the cards")
+    parser.add_argument('--addspaces', action='store_true',
+                        help="add spacing in between tokens, useful for word-level modeling")
     parser.add_argument('-v', '--verbose', action='store_true', 
                         help='verbose output')
     
     args = parser.parse_args()
     main(args.infile, args.outfile, verbose = args.verbose, encoding = args.encoding, 
          nolinetrans = args.nolinetrans, randomize = args.randomize, nolabel = args.nolabel, 
-         stable = args.stable)
+         stable = args.stable,addspaces = args.addspaces)
     exit(0)
