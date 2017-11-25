@@ -238,6 +238,14 @@ def fields_from_json(src_json, linetrans = True, addspaces = False):
         name_orig = name_val
         name_val = transforms.name_pass_1_sanitize(name_val)
         name_val = utils.to_ascii(name_val)
+        
+        #RMM: Testing out the idea of chopping up names.
+        if addspaces:
+            def intersperse(lst, item):
+                result = [item] * (len(lst) * 2 - 1)
+                result[0::2] = lst
+                return result
+            name_val = intersperse(name_val, ' ')
         fields[field_name] = [(-1, name_val)]
     else:
         name_orig = ''
@@ -440,7 +448,7 @@ class Card:
                                   fmt_ordered = fmt_ordered,
                                   fmt_labeled = fmt_labeled,
                                   fieldsep = fieldsep,
-                                  linetrans = linetrans)
+                                  linetrans = linetrans, addspaces = addspaces)
             p_success, v_success, parsed_fields = fields_from_json(src, linetrans = linetrans, addspaces = addspaces)
             self.parsed = p_success
             self.valid = v_success
@@ -604,13 +612,6 @@ class Card:
             outfields = [''] + outfields
         if final_sep:
             outfields = outfields + ['']
-
-        #if add_spaces:
-        #    def intersperse(lst, item):
-        #        result = [item] * (len(lst) * 2 - 1)
-        #        result[0::2] = lst
-        #        return result
-        #    outfields = intersperse(outfields, ' XXX ')
             
         outstr = fieldsep.join(outfields)
 
