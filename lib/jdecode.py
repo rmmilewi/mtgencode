@@ -80,6 +80,7 @@ def default_exclude_layouts(layout):
 def mtg_open_file(fname, verbose = False,
                   linetrans = True, addspaces = False, fmt_ordered = cardlib.fmt_ordered_default,
                   exclude_sets = default_exclude_sets,
+                  include_sets = None,
                   exclude_types = default_exclude_types,
                   exclude_layouts = default_exclude_layouts):
 
@@ -115,7 +116,7 @@ def mtg_open_file(fname, verbose = False,
                 # but eh
 
                 skip = False
-                if (exclude_sets(jcards[idx][utils.json_field_set_name])
+                if (include_sets != None and jcards[idx][utils.json_field_set_name] not in include_sets) or (exclude_sets(jcards[idx][utils.json_field_set_name])
                     or exclude_layouts(jcards[idx]['layout'])):
                     skip = True
                 for cardtype in card.types:

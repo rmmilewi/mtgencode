@@ -12,7 +12,7 @@ import cardlib
 import compression
 
 def main(fname, oname = None, verbose = True, encoding = 'std', 
-		 nolinetrans = False, randomize = False, nolabel = False, stable = False, addspaces = False):
+		 nolinetrans = False, randomize = False, nolabel = False, stable = False, addspaces = False,filtersets = None):
 	fmt_ordered = cardlib.fmt_ordered_default
 	fmt_labeled = None if nolabel else cardlib.fmt_labeled_default
 	
@@ -30,6 +30,9 @@ def main(fname, oname = None, verbose = True, encoding = 'std',
 	randomize_mana = randomize
 	initial_sep = True
 	final_sep = True
+	
+	if filtersets != None:
+		filtersets = filtersets.split(',')
 
 	# set the properties of the encoding
 
@@ -68,14 +71,15 @@ def main(fname, oname = None, verbose = True, encoding = 'std',
 		if not line_transformations:
 			print('	 NOT using line reordering transformations')
 
-	cards = jdecode.mtg_open_file(fname, verbose=verbose, linetrans=line_transformations, addspaces = addspaces)
+	cards = jdecode.mtg_open_file(fname, verbose=verbose, linetrans=line_transformations, addspaces = addspaces,include_sets=filtersets)
+	#compression.compress_demo(cards)
 	
 	#RMMTMP
-	cardtxts = [ card.text_words for card in cards]
-	ngrams = compression.count_ngrams(cardtxts)
-	compression.print_most_frequent(ngrams,50)
+        #card.text.text.split()
+	#cardtxts = [ card.text_words for card in cards]
+	#ngrams = compression.count_ngrams(cardtxts)
+	#compression.print_most_frequent(ngrams,100)
 	#compression.build_vocab(cardtxts)
-	return None #TMP
 	
 
 	# This should give a random but consistent ordering, to make comparing changes
@@ -130,11 +134,13 @@ if __name__ == '__main__':
 						help="don't randomize the order of the cards")
 	parser.add_argument('--addspaces', action='store_true',
 						help="add spacing in between tokens, useful for word-level modeling")
+	parser.add_argument('--filtersets', type=str, default=None,
+						help="filter Magic sets by a comma-separated list of set names; only cards from these sets will be encoded.")
 	parser.add_argument('-v', '--verbose', action='store_true', 
 						help='verbose output')
 	
 	args = parser.parse_args()
 	main(args.infile, args.outfile, verbose = args.verbose, encoding = args.encoding, 
 		 nolinetrans = args.nolinetrans, randomize = args.randomize, nolabel = args.nolabel, 
-		 stable = args.stable,addspaces = args.addspaces)
+		 stable = args.stable,addspaces = args.addspaces,filtersets = args.filtersets)
 	exit(0)
